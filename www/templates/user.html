@@ -1,0 +1,28 @@
+{% extends '__base__.html' %}
+
+{% block title %}{{ user.name }}{% endblock %}
+
+{% block content %}
+
+<div class="uk-width-medium-3-4">
+        <article class="uk-article">
+            <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ user.image }}">
+            <h2><a href="/user/{{ user.id }}">{{ user.name }}</a></h2>
+            <p class="uk-article-meta">注册于{{ user.created_at|datetime}}</p>
+            <p>{{ user.email }}</p>
+        </article>
+</div>
+
+<div class="uk-width-medium-1-4">
+    <div class="uk-panel uk-panel-header">
+        <h3 class="uk-panel-title">友情链接</h3>
+        <ul class="uk-list uk-list-line">
+            <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">编程</a></li>
+            <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">读书</a></li>
+            <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Python教程</a></li>
+            <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Git教程</a></li>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends '__base__.html' %}
+
+{% block title %}日志{% endblock %}
+{% block beforehead %}
+<script>
+    var vm
+    function initVM(data) {
+        vm = new Vue({
+            el: '#vm',
+            data: {
+                blogs: data.blogs,
+                page: data.page
+            }
+        });
+        $('#vm').show();
+    }
+    // var result = {{page1}}
+    // alert(result+"11111")
+    // initVM(result);
+    
+$(function() {
+    getJSON('/api/blogs', {
+        page: '{{ page_index }}'
+    }, function (err, results) {
+        if (err) {
+            return fatal(err);
+        }
+        $('#loading').hide();
+        initVM(results);
+    });
+});    
+</script>
+{% endblock %}
+{% block content %}
+    <div id="error" class="uk-width-1-1">
+    </div>
+
+    <div id="loading" class="uk-width-1-1 uk-text-center">
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
+    </div>
+
+    <div id="vm" class="uk-width-medium-3-4">
+        <div v-repeat="blog: blogs">
+            <article class="uk-article">
+                <h2><a target="_blank" v-attr="href:'/blog/'+blog.id" v-text="blog.name"></a></h2>
+                <p class="uk-article-meta" v-text="'发表于'+blog.created_at.toDateTime()"></p>
+                <p v-text="blog.summary"></p>
+                 <p v-text="blog.content"></p> 
+                <p><a target="_blank" v-attr="href:'/blog/'+ blog.id">继续阅读<i class="uk-icon-angle-double-right"></i></a></p>
+            </article>
+            <hr class="uk-article-divider">
+        </div>
+        <!-- {% for blog in blogs %}
+        <article class="uk-article">
+            <h2><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h2>
+            <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
+            <p>{{ blog.summary }}</p>
+            <p><a href="/blog/{{ blog.id }}">继续阅读 <i class="uk-icon-angle-double-right"></i></a></p>
+        </article>
+        <hr class="uk-article-divider">
+        {% endfor %} -->
+        <div v-component="pagination" v-with="page"></div>
+    </div>
+
+    <div class="uk-width-medium-1-4">
+        <div class="uk-panel uk-panel-header">
+            <h3 class="uk-panel-title">友情链接</h3>
+            <ul class="uk-list uk-list-line">
+                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">编程</a></li>
+                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">读书</a></li>
+                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Python教程</a></li>
+                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Git教程</a></li>
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}
