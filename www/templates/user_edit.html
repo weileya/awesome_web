@@ -18,7 +18,7 @@ function initVM(user) {
     vm = new Vue({
         el: '#vm',
         data: {
-            id:user.id,
+            // id:user.id,
             name:user.name,
             email:user.email,
             passwd:user.passwd
@@ -37,10 +37,10 @@ function initVM(user) {
                     return $form.showFormError('口令长度至少为6个字符');
                 }
                 var email = this.email.trim().toLowerCase();
-                $form.postJSON(action, {              // 输入完信息，直接请求注册接口
+                $form.postJSON(action, {              
                     name: this.name.trim(),
                     email: email,
-                    passwd: CryptoJS.SHA1(email + ':' + this.passwd).toString()
+                    passwd: this.passwd==='' ? '' : CryptoJS.SHA1(email + ':' + this.passwd).toString()
                 },function (err, r) {
                     if (err) {
                         $form.showFormError(err);
@@ -48,6 +48,7 @@ function initVM(user) {
                     else {
                         // return location.assign('/user/{id}');
                         alert("修改成功！")
+                        location.assign('/')
                     }
                 });
             }
@@ -60,10 +61,12 @@ function initVM(user) {
 $(function () {
     getJSON('/api/user/userinfo', function (err, user) {
         // console.log(user)
+        // console.log(user.passwd)
         if (err) {
             return fatal(err);
         }
         $('#loading').hide();
+        user.passwd=''
         initVM(user);
     });   
 });
@@ -81,8 +84,8 @@ $(function () {
         <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
     </div>
 
-    <div id="vm" class="uk-width-2-3">
-        <form v-on="submit: submit" class="uk-form uk-form-stacked">
+    <div  class="uk-width-2-3">
+        <form id="vm" v-on="submit: submit" class="uk-form uk-form-stacked">
             <div class="uk-alert uk-alert-danger uk-hidden"></div>
             <div class="uk-form-row">
                 <label class="uk-form-label">姓名:</label>

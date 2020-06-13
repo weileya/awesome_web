@@ -65,16 +65,6 @@ def text2html(text):
     lines = map(lambda s: '<p>%s</p>' % s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'), filter(lambda s: s.strip() != '', text.split('\n')))
     return ''.join(lines)
 
-# str = '<p><a href="http://www.liaoxuefeng.com/" target="_blank">www.liaoxuefeng.com</a>. All rights reserved.</p>'
-# li = text2html(str)
-# print(li)
-# user1 = User()
-# user1.id='123343aaaa'
-# user1.passwd='123456'
-# max_time = 10
-# test = user2cookie(user1,max_time)
-# print(test)
-
 # @asyncio.coroutine
 async def cookie2user(cookie_str):
     '''
@@ -415,7 +405,7 @@ async def api_update_user(id, request, *, name, email, admin):
         raise APIValueError('admin', 'admin cannot be empty.')
     user.name = name.strip()
     user.email = email.strip()
-    user.admin = admin.strip()
+    user.admin = admin
     await user.update()
     return user
 
