@@ -45,7 +45,7 @@ $(function() {
                 <h2><a target="_blank" v-attr="href:'/blog/'+blog.id" v-text="blog.name"></a></h2>
                 <p class="uk-article-meta" v-text="'发表于'+blog.created_at.toDateTime()"></p>
                 <p v-text="blog.summary"></p>
-                 <p v-text="blog.content"></p> 
+                 <!-- <p v-text="blog.content"></p>  -->
                 <p><a target="_blank" v-attr="href:'/blog/'+ blog.id">继续阅读<i class="uk-icon-angle-double-right"></i></a></p>
             </article>
             <hr class="uk-article-divider">

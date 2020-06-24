@@ -1,0 +1,140 @@
+{% extends '__base__.html' %}
+
+{% block title %}编辑个人头像{% endblock %}
+
+{% block beforehead %}
+
+<script>
+
+$(function () {
+    var $form = $('#form-image');
+    // var $btn = $('.btn');
+    
+    // $btn.bind('click', function (e) {
+    //     e.preventDefault();
+    // //     // $form.showFormError('');
+    //     var file = $('#imageup')[0].files[0];
+    // //     // console.log(123, file);
+    //     var formdata = new FormData();
+    //     formdata.append("image", file);
+    //     if (file==='') {
+    //         return $form.showFormError('请上传图片！');
+    //     }
+    //     var ext = file.name.substring(file.name.lastIndexOf('.')+1).toLowerCase();
+    //     if(ext!='jpg' && ext!='png' && ext!='jpeg'){
+    //         return $form.showFormError('只能上传jpg/png/jpeg格式的图片！');
+    //     }
+    //     previewFile()
+    // //     // let a = JSON.stringify(base64Pic)
+    // //     // console.log(222, a)
+    //     $.ajax({
+    //         url: '{{action}}',
+    //         type: 'POST',
+    //         data: formdata,
+    //         cache: false, //禁止浏览器对该URL的缓存
+    //         contentType: false,
+    //         processData: false,
+    //         success: function(){
+    //             console.log(123123123123123123123)
+    //         }
+    //     });
+    // })
+
+
+    $form.submit(function (e) {
+        e.preventDefault();
+        $form.showFormError('');
+        var file = $form.find('input')[0].files[0];
+        // console.log(file+"111");
+        // console.log(typeof(file),"222");
+        var formdata = new FormData();
+        formdata.append("image",file);
+        // var fileReader = new FileReader();
+        // fileReader.readAsDataURL(file);
+        // fileReader.onload = function(){
+        //     console.log(this.result,'000');
+        // }
+        // base64Pic = fileReader.result;
+        // // console.log(typeof(base64Pic),111)
+        // // console.log(base64Pic,222);
+        // formdata.append("image",base64Pic);
+        if (file==='') {
+            return $form.showFormError('请上传图片！');
+        }
+        var ext = file.name.substring(file.name.lastIndexOf('.')+1).toLowerCase();
+        if(ext!='jpg' && ext!='png' && ext!='jpeg'){
+            return $form.showFormError('只能上传jpg/png/jpeg格式的图片！');
+        }
+        previewFile()
+        // $form.postJSON('{{action}}', {image:formdata}, function (err, result) {
+        //     if (err) {
+        //         return $form.showFormError(err);
+        //     }
+        //     refresh();
+        // });
+        $.ajax({
+            url: '{{action}}',
+            type: 'POST',
+            data: formdata,
+            cache: false, //禁止浏览器对该URL的缓存
+            contentType: false,
+            processData: false,
+            success: function(){
+                console.log(123123123123123123123)
+            }
+        });
+    });
+});
+
+function previewFile() {
+    var preview = document.querySelector('img[id=preview]');
+    var file  = document.querySelector('input[type=file]').files[0];
+    //  alert(file);
+    var reader = new FileReader();
+    reader.onloadend = function () {
+    preview.src = reader.result;
+    }
+    if (file) {
+    reader.readAsDataURL(file);
+    } else {
+    preview.src = "";
+    }
+}
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div id="error" class="uk-width-1-1">
+    </div>
+
+    <!-- <div id="loading" class="uk-width-1-1 uk-text-center">
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
+    </div> -->
+    <div class="uk-width-medium-3-4">
+    {% if __user__ %}
+        <h4>现在头像</h4>
+        <article class="uk-comment">
+            <header class="uk-comment-header">
+                <div>
+                    <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ __user__.image }}">
+                    <h4 class="uk-comment-title">{{ __user__.name }}</h4>
+                </div>
+            </header>
+            <div>
+                <form id="form-image" class="uk-form" method="post" action={{action}} enctype="multipart/form-data">
+                    <div class="uk-alert uk-alert-danger uk-hidden"></div>
+                    <input id="imageup" type="file" size="30" name="file" accept="image/*"/>
+                    <img id="preview" alt="" src="" name="pic" class="file_img" style="margin-top: 5px;margin-left: 12px; width: 50px; height: 50px;"/>
+                    <!-- <br>  -->
+                    <button type="submit" value="上传头像" class="uk-button uk-button-primary btn"><i class="uk-icon-save">上传</i></button>
+                </form>
+            </div>
+        </article>
+    {% endif %}
+    </div>
+
+
+{% endblock %}

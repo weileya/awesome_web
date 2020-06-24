@@ -13,6 +13,9 @@ from models import User, Comment, Blog, next_id
 from apis import APIValueError, APIResourceNotFoundError,APIError,APIPermissionError,Page
 from config import configs
 import markdown2
+import datetime,os
+import PIL.Image
+import random
 # @get('/')
 # async def index(request):
 #     users = await User.findAll()
@@ -159,7 +162,7 @@ async def api_create_blog(request, *, name, summary, content):
 async def api_blogs(*, page='1'):
     page_index = get_page_index(page)
     num = await Blog.findNumber('count(id)')
-    p = Page(num, page_index)
+    p = Page(num, page_index,page_size=5)
     if num == 0:
         return dict(page=p, blogs=())
     blogs = await Blog.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
@@ -416,6 +419,61 @@ def signout(request):
     r.set_cookie(COOKIE_NAME, '-deleted-', max_age=0, httponly=True)
     logging.info('user signed out.')
     return r
+
+
+@get('/user/edit/image')   # 个人修改头像
+def edit_user_image(request):
+    user = request.__user__
+    return {
+        '__template__': 'user_edit_image.html',
+        'user':user,
+        'action': '/api/user/image' 
+    }
+
+def create_uuid(): #生成唯一的图片的名称字符串，防止图片显示时的重名问题
+    nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")        # 生成当前时间
+    randomNum = random.randint(0, 100)  # 生成的随机整数n，其中0<=n<=100
+    if randomNum <= 10:
+        randomNum = str(0) + str(randomNum)
+    uniqueNum = str(nowTime) + str(randomNum)
+    return uniqueNum
+
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+@post('/api/user/image')
+async def api_user_image(request,*,image):
+    print(basedir)
+    user = request.__user__
+    print(user)
+    image11 = await request.post()
+    image1 = image11.getone('image')
+    # image1 = request.files.get('image')
+    # image1 = image
+    # print(dir(image11),0000)
+    # image1 = image11[0]
+    print(type(image1),111)
+    print(dir(image1),222)
+    # print(image1.__doc__)
+    # print(image1.content_type)
+    # print(type(image_file),333)
+    # print(dir(image_file),4444)
+    # print(image1.file.file,555)
+    # print(image1.file.name,666)
+    path = os.path.join(basedir,'\\static\\upload\\')
+    if not os.path.exists(path):
+        os.makedirs(path)   
+    iamge_name = str(image1.filename)
+    name = iamge_name[:(iamge_name.index('.'))]
+    print(name)
+    imagename = create_uuid()+name
+    # print(111, imagename)
+    file_path = os.path.join(path,imagename)
+    print(file_path)
+    image1.save(file_path,'jpeg')
+    # with open(file_path, "wb+") as destination:
+    #     for chunk in image1.chunks():
+    #         destination.write(chunk)
+    return image1
 
 
 
